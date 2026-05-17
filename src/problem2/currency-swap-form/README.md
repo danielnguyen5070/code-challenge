@@ -54,6 +54,8 @@ Open the URL shown in the terminal (usually `http://localhost:5173`).
 npm run build    # Production build
 npm run preview  # Preview production build
 npm run lint     # ESLint
+npm run test     # Vitest (watch)
+npm run test:run # Vitest (CI)
 ```
 
 ## Project Structure
@@ -123,6 +125,7 @@ Icons are loaded with `import.meta.glob` from `assets/tokens/`. This gives corre
 GitHub Actions runs on push/PR when files under `currency-swap-form` change:
 
 - **Lint** — `npm run lint`
+- **Test** — `npm run test:run` (Vitest + Testing Library)
 - **Build** — `npm run build` (TypeScript + Vite)
 
 Workflow file: `.github/workflows/currency-swap-form.yml` at the repository root.
