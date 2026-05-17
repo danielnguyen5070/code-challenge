@@ -1,10 +1,11 @@
-# 99Tech Code Challenge #1 #
+# 99Tech Code Challenge
 
-Note that if you fork this repository, your responses may be publicly linked to this repo.  
-Please submit your application along with the solutions attached or linked.   
+Solutions for the 99Tech frontend code challenge. Each problem lives under `src/`.
 
-It is important that you minimally attempt the problems, even if you do not arrive at a working solution.
+## Repository layout
 
-## Submission ##
-You can either provide a link to an online repository, attach the solution in your application, or whichever method you prefer.
-We're cool as long as we can view your solution without any pain.
+| Problem | Path | Summary |
+|---------|------|---------|
+| **1** — Sum to *n* | [`src/problem1/sum_to_n.js`](src/problem1/sum_to_n.js) | Three unique JavaScript implementations (formula, loop, recursion) with inline tests |
+| **2** — Currency swap form | [`src/problem2/currency-swap-form/`](src/problem2/currency-swap-form/) | React swap UI with live prices, debounced quotes, validation, and tests |
+| **3** — Wallet page review | [`src/problem3/readme.md`](src/problem3/readme.md) | Issues, anti-patterns, and a refactored `WalletPage` component |
