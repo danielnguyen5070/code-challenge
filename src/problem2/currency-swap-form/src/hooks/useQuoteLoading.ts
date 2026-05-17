@@ -1,4 +1,4 @@
-import { parseAmountInput } from '../lib/format';
+import { parseAmountInput } from '@lib/format';
 import { useDebounce } from './useDebounce';
 
 export const QUOTE_DEBOUNCE_MS = 450;

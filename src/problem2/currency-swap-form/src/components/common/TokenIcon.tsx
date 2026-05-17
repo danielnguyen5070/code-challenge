@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { resolveTokenIcon } from '../lib/tokens';
-import { cn } from '../lib/utils';
+import { cn } from '@lib/utils';
+import { resolveTokenIcon } from '@services';
 
 type TokenIconProps = {
   symbol: string;

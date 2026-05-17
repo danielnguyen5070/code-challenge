@@ -1,6 +1,4 @@
-import type { PriceEntry, Token } from '../types';
-
-export const PRICES_API_URL = 'https://interview.switcheo.com/prices.json';
+import type { PriceEntry, Token } from '@types';
 
 export function normalizePrices(entries: PriceEntry[]): Map<string, number> {
   const latest = new Map<string, PriceEntry>();

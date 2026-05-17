@@ -1,11 +1,11 @@
 import { motion } from 'framer-motion';
-import type { Token } from '../types';
 import {
   formatUsd,
   isAmountAtIntegerLimit,
   sanitizeAmountInput,
-} from '../lib/format';
-import { cn } from '../lib/utils';
+} from '@lib/format';
+import { cn } from '@lib/utils';
+import type { Token } from '@types';
 import { TokenPicker } from './TokenPicker';
 
 type CurrencyFieldProps = {

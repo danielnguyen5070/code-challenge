@@ -2,9 +2,9 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Check, ChevronDown, Search } from 'lucide-react';
-import type { Token } from '../types';
-import { formatUsd } from '../lib/format';
-import { cn } from '../lib/utils';
+import { formatUsd } from '@lib/format';
+import { cn } from '@lib/utils';
+import type { Token } from '@types';
 import { TokenIcon } from './TokenIcon';
 
 const MENU_WIDTH_PX = 288;
@@ -46,7 +46,6 @@ export function TokenPicker({
 
   useEffect(() => {
     if (!open || !portaled) {
-      setMenuPosition(null);
       return;
     }
 
@@ -66,11 +65,12 @@ export function TokenPicker({
       });
     }
 
-    updatePosition();
+    const frame = requestAnimationFrame(updatePosition);
     window.addEventListener('resize', updatePosition);
     window.addEventListener('scroll', updatePosition, true);
 
     return () => {
+      cancelAnimationFrame(frame);
       window.removeEventListener('resize', updatePosition);
       window.removeEventListener('scroll', updatePosition, true);
     };

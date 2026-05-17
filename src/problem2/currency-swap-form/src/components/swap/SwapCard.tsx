@@ -1,28 +1,27 @@
 import { useState } from 'react';
-import { useQuoteLoading } from '../hooks/useQuoteLoading';
-import { QuoteSection } from './QuoteSection';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { motion } from 'framer-motion';
-import { ArrowDownUp, Loader2 } from 'lucide-react';
-import { useForm } from 'react-hook-form';
-import toast from 'react-hot-toast';
-import type { SwapFormValues, Token } from '../types';
-import { convertAmount, getExchangeRate } from '../lib/prices';
+import { CurrencyField } from '@components/common/CurrencyField';
+import { useQuoteLoading } from '@hooks/useQuoteLoading';
 import {
   formatAmount,
   formatAmountForInput,
   formatRate,
   parseAmountInput,
   sanitizeAmountInput,
-} from '../lib/format';
-import { getMockBalance } from '../lib/tokens';
-import { swapSchema } from '../lib/validation';
-import { cn } from '../lib/utils';
-import { CurrencyField } from './CurrencyField';
+} from '@lib/format';
+import { convertAmount } from '@lib/prices';
+import { swapSchema } from '@lib/validation';
+import { cn } from '@lib/utils';
+import { executeSwap, getBalance, getQuote } from '@services';
+import type { SwapFormValues, Token } from '@types';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { motion } from 'framer-motion';
+import { ArrowDownUp, Loader2 } from 'lucide-react';
+import { useForm } from 'react-hook-form';
+import toast from 'react-hot-toast';
+import { QuoteSection } from './QuoteSection';
 
 const DEFAULT_FROM = 'ETH';
 const DEFAULT_TO = 'USDC';
-const SUBMIT_DELAY_MS = 1800;
 
 type SwapCardProps = {
   tokens: Token[];
@@ -60,14 +59,21 @@ export function SwapCard({ tokens, priceMap }: SwapCardProps) {
   const toPrice = priceMap.get(toSymbol) ?? 0;
   const parsedFromAmount = parseAmountInput(fromAmount) ?? 0;
   const parsedSettledAmount = parseAmountInput(settledAmount) ?? 0;
-  const receiveAmount = convertAmount(parsedSettledAmount, fromPrice, toPrice);
-  const rate = getExchangeRate(fromPrice, toPrice);
-  const fromUsd = parsedFromAmount > 0 ? parsedFromAmount * fromPrice : null;
-  const toUsd =
-    receiveAmount != null && receiveAmount > 0
-      ? receiveAmount * toPrice
-      : null;
-  const fromBalance = getMockBalance(fromSymbol);
+  const payQuote = getQuote({
+    payAmount: parsedFromAmount,
+    fromPrice,
+    toPrice,
+  });
+  const settledQuote = getQuote({
+    payAmount: parsedSettledAmount,
+    fromPrice,
+    toPrice,
+  });
+  const receiveAmount = settledQuote.receiveAmount;
+  const rate = settledQuote.rate;
+  const fromUsd = payQuote.fromUsd;
+  const toUsd = settledQuote.toUsd;
+  const fromBalance = getBalance(fromSymbol);
 
   const receiveDisplay =
     receiveAmount != null && receiveAmount > 0
@@ -154,16 +160,18 @@ export function SwapCard({ tokens, priceMap }: SwapCardProps) {
 
     setIsSubmitting(true);
 
-    await new Promise((resolve) => {
-      window.setTimeout(resolve, SUBMIT_DELAY_MS);
-    });
+    try {
+      const result = await executeSwap({
+        fromSymbol: values.fromSymbol,
+        toSymbol: values.toSymbol,
+        fromAmount: values.fromAmount,
+        receiveAmount: receiveDisplay,
+      });
 
-    setIsSubmitting(false);
-
-    toast.success(
-      `Swapped ${values.fromAmount} ${values.fromSymbol} → ${receiveDisplay} ${toSymbol}`,
-      { duration: 4500 },
-    );
+      toast.success(result.message, { duration: 4500 });
+    } finally {
+      setIsSubmitting(false);
+    }
 
     setValue('fromAmount', '', { shouldValidate: false });
     setLastEdited('from');

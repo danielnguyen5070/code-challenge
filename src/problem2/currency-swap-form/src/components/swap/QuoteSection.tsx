@@ -1,6 +1,6 @@
-import type { Token } from '../types';
-import { cn } from '../lib/utils';
-import { CurrencyField } from './CurrencyField';
+import { CurrencyField } from '@components/common/CurrencyField';
+import { cn } from '@lib/utils';
+import type { Token } from '@types';
 import { QuoteSectionSkeleton } from './QuoteSectionSkeleton';
 
 /** Fixed height for the receive quote zone to prevent layout shift */

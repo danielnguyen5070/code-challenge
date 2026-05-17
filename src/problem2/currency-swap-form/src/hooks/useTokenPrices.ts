@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import type { PriceEntry, Token } from '../types';
-import { buildTokens, normalizePrices, PRICES_API_URL } from '../lib/prices';
+import { fetchMarketData } from '@services';
+import type { Token } from '@types';
 
 type PricesState =
   | { status: 'loading' }
@@ -15,14 +15,7 @@ export function useTokenPrices() {
 
     async function load() {
       try {
-        const response = await fetch(PRICES_API_URL);
-        if (!response.ok) {
-          throw new Error(`Failed to load prices (${response.status})`);
-        }
-
-        const entries = (await response.json()) as PriceEntry[];
-        const priceMap = normalizePrices(entries);
-        const tokens = buildTokens(priceMap);
+        const { tokens, priceMap } = await fetchMarketData();
 
         if (!cancelled) {
           setState({ status: 'ready', tokens, priceMap });

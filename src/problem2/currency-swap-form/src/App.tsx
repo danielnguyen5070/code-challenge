@@ -1,8 +1,8 @@
 import { motion } from 'framer-motion';
 import { Toaster } from 'react-hot-toast';
-import { SwapCard } from './components/SwapCard';
-import { SwapSkeleton } from './components/SwapSkeleton';
-import { useTokenPrices } from './hooks/useTokenPrices';
+import { SwapCard } from '@components/swap/SwapCard';
+import { SwapSkeleton } from '@components/swap/SwapSkeleton';
+import { useTokenPrices } from '@hooks/useTokenPrices';
 
 export default function App() {
   const prices = useTokenPrices();
