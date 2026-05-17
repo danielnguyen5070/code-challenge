@@ -1,73 +1,88 @@
-# React + TypeScript + Vite
+## Features
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+- **Live pricing** — Fetches token prices from the interview API and deduplicates by latest timestamp
+- **Instant quotes** — Receive amount updates from `(pay × fromPrice) / toPrice`
+- **Debounced input** — Pay amount is debounced (~450ms) with a skeleton loader while the quote recalculates
+- **Token picker** — Searchable dropdown with lazy-loaded SVG icons from `src/assets/tokens/`
+- **Flip direction** — Swap button exchanges tokens and moves the current receive amount into **You pay**
+- **Validation** — Required amount, balance check (mock), and different-token enforcement via Zod + React Hook Form
+- **Mock submit** — Confirm swap shows a loading state (~1.8s) then a success toast
+- **Polished UX** — Dark DeFi-style layout, stable quote-zone height, input sanitization, and portaled receive dropdown (no clipping)
 
-Currently, two official plugins are available:
+## Tech Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **Build** — [Vite](https://vitejs.dev/) 8
+- **UI** — React 19, Tailwind CSS 4, Framer Motion
+- **Forms** — React Hook Form, Zod, `@hookform/resolvers`
+- **Feedback** — React Hot Toast, Lucide React
 
-## React Compiler
+## Getting Started
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### Prerequisites
 
-## Expanding the ESLint configuration
+- Node.js 18+
+- npm
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### Install & run
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+cd currency-swap-form
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Open the URL shown in the terminal (usually `http://localhost:5173`).
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### Other scripts
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm run build    # Production build
+npm run preview  # Preview production build
+npm run lint     # ESLint
 ```
+
+## Project Structure
+
+```
+src/
+├── components/
+│   ├── SwapCard.tsx           # Main swap form
+│   ├── CurrencyField.tsx      # Pay / receive amount fields
+│   ├── TokenPicker.tsx        # Searchable token dropdown
+│   ├── QuoteSection.tsx       # Receive + rate/fee zone
+│   └── ...
+├── hooks/
+│   ├── useTokenPrices.ts      # Price API fetch
+│   ├── useDebounce.ts         # Generic debounce hook
+│   └── useQuoteLoading.ts     # Quote loading + debounced amount
+├── lib/
+│   ├── prices.ts              # Price normalization & conversion
+│   ├── format.ts              # Formatting & input sanitization
+│   ├── validation.ts          # Zod schema
+│   └── tokens.ts              # Icon resolution & mock balances
+└── assets/tokens/             # Token SVG images
+```
+
+## External API
+
+Prices are loaded from:
+
+```
+https://interview.switcheo.com/prices.json
+```
+
+Only tokens with a price entry are shown. Exchange rates are derived from USD prices:
+
+```
+receive = (payAmount × fromTokenUsdPrice) / toTokenUsdPrice
+```
+
+## Notes
+
+- Wallet balances are **mocked** for demo purposes (`MAX` uses a deterministic balance per token).
+- Submit does not call a real backend; it simulates latency and shows a toast.
+- Pay input is limited to **12 integer digits** and **8 decimal places** to avoid overflow and layout issues.
+
+## License
+
+Private — submission for code challenge purposes.
